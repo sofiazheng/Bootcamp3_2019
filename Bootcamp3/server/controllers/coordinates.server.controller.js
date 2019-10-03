@@ -23,8 +23,17 @@ module.exports = function(req, res, next) {
       qs: options
       }, function(error, response, body) {
         //For ideas about response and error processing see https://opencagedata.com/tutorials/geocode-in-nodejs
-        
-        //JSON.parse to get contents. Remember to look at the response's JSON format in open cage data
+        if(error) {
+          console.log(error);
+          response.statusCode = 404;
+        }
+        else {
+          var coord = JSON.parse(body); //JSON.parse to get contents. Remember to look at the response's JSON format in open cage data
+          req.results = {
+            lat: coord.results[0].geometry.lat,
+            lng: coord.results[0].geometry.lng
+          };
+        }
         
         /*Save the coordinates in req.results -> 
           this information will be accessed by listings.server.model.js 
